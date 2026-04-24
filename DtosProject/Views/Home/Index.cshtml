@@ -1,0 +1,61 @@
+﻿@using DtosProject.DTOs
+@model List<ClientListItemDTO>
+
+@{
+    ViewData["Title"] = "Клієнти";
+}
+
+<h1>Список клієнтів</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Додати клієнта</a>
+</p>
+
+<form method="get" class="row g-3 mb-4">
+    <div class="col-md-4">
+        <input type="text" name="searchTerm" class="form-control" placeholder="Пошук за ім'ям або email" value="@ViewBag.SearchTerm" />
+    </div>
+    <div class="col-md-2">
+        <input type="number" name="minAge" class="form-control" placeholder="Мін. вік" value="@ViewBag.MinAge" />
+    </div>
+    <div class="col-md-2">
+        <input type="number" name="maxAge" class="form-control" placeholder="Макс. вік" value="@ViewBag.MaxAge" />
+    </div>
+    <div class="col-md-2">
+        <button type="submit" class="btn btn-secondary">Пошук</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Скинути</a>
+    </div>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>ПІБ</th>
+            <th>Email</th>
+            <th>Вік</th>
+            <th>Дії</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var client in Model)
+        {
+            <tr>
+                <td>@client.Id</td>
+                <td>@client.FullName</td>
+                <td>@client.Email</td>
+                <td>@client.Age</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@client.Id" class="btn btn-sm btn-info">Деталі</a>
+                    <a asp-action="Edit" asp-route-id="@client.Id" class="btn btn-sm btn-warning">Редагувати</a>
+                    <a asp-action="Delete" asp-route-id="@client.Id" class="btn btn-sm btn-danger">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">Клієнтів не знайдено</div>
+}
