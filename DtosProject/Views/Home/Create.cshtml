@@ -5,37 +5,56 @@
     ViewData["Title"] = "Додати клієнта";
 }
 
-<h1>Додати нового клієнта</h1>
+<div class="card-custom">
+    <div class="d-flex align-items-center mb-4">
+        <a asp-action="Index" class="btn btn-outline-secondary me-3">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h1 class="mb-0"><i class="fas fa-user-plus me-3 text-success"></i>Додати нового клієнта</h1>
+    </div>
 
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <form asp-action="Create" class="needs-validation">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            <div class="form-group mb-3">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
-            </div>
+                <div class="mb-4">
+                    <label asp-for="FullName" class="form-label fw-bold">
+                        <i class="fas fa-user me-2"></i>ПІБ
+                    </label>
+                    <input asp-for="FullName" class="form-control form-control-lg"
+                           placeholder="Введіть повне ім'я" />
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+                <div class="mb-4">
+                    <label asp-for="Email" class="form-label fw-bold">
+                        <i class="fas fa-envelope me-2"></i>Email
+                    </label>
+                    <input asp-for="Email" class="form-control form-control-lg"
+                           placeholder="example@mail.com" type="email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Age" class="control-label"></label>
-                <input asp-for="Age" class="form-control" />
-                <span asp-validation-for="Age" class="text-danger"></span>
-            </div>
+                <div class="mb-4">
+                    <label asp-for="Age" class="form-label fw-bold">
+                        <i class="fas fa-calendar me-2"></i>Вік
+                    </label>
+                    <input asp-for="Age" class="form-control form-control-lg"
+                           placeholder="Введіть вік" type="number" />
+                    <span asp-validation-for="Age" class="text-danger"></span>
+                </div>
 
-            <div class="form-group">
-                <input type="submit" value="Створити" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Назад до списку</a>
-            </div>
-        </form>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-custom-primary btn-lg">
+                        <i class="fas fa-save me-2"></i>Створити
+                    </button>
+                    <a asp-action="Index" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-times me-2"></i>Скасувати
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

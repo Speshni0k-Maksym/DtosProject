@@ -5,57 +5,93 @@
     ViewData["Title"] = "Клієнти";
 }
 
-<h1>Список клієнтів</h1>
-
-<p>
-    <a asp-action="Create" class="btn btn-primary">Додати клієнта</a>
-</p>
-
-<form method="get" class="row g-3 mb-4">
-    <div class="col-md-4">
-        <input type="text" name="searchTerm" class="form-control" placeholder="Пошук за ім'ям або email" value="@ViewBag.SearchTerm" />
+<div class="card-custom">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1><i class="fas fa-users me-3 text-primary"></i>Список клієнтів</h1>
+            <p class="text-muted">Всього клієнтів: @Model.Count</p>
+        </div>
+        <a asp-action="Create" class="btn btn-custom-primary">
+            <i class="fas fa-plus me-2"></i>Додати клієнта
+        </a>
     </div>
-    <div class="col-md-2">
-        <input type="number" name="minAge" class="form-control" placeholder="Мін. вік" value="@ViewBag.MinAge" />
-    </div>
-    <div class="col-md-2">
-        <input type="number" name="maxAge" class="form-control" placeholder="Макс. вік" value="@ViewBag.MaxAge" />
-    </div>
-    <div class="col-md-2">
-        <button type="submit" class="btn btn-secondary">Пошук</button>
-        <a asp-action="Index" class="btn btn-outline-secondary">Скинути</a>
-    </div>
-</form>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>ПІБ</th>
-            <th>Email</th>
-            <th>Вік</th>
-            <th>Дії</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var client in Model)
-        {
-            <tr>
-                <td>@client.Id</td>
-                <td>@client.FullName</td>
-                <td>@client.Email</td>
-                <td>@client.Age</td>
-                <td>
-                    <a asp-action="Details" asp-route-id="@client.Id" class="btn btn-sm btn-info">Деталі</a>
-                    <a asp-action="Edit" asp-route-id="@client.Id" class="btn btn-sm btn-warning">Редагувати</a>
-                    <a asp-action="Delete" asp-route-id="@client.Id" class="btn btn-sm btn-danger">Видалити</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <div class="bg-light p-4 rounded-3 mb-4">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label fw-bold">
+                    <i class="fas fa-search me-1"></i>Пошук
+                </label>
+                <input type="text" name="searchTerm" class="form-control"
+                       placeholder="Ім'я або email..." value="@ViewBag.SearchTerm" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-bold">Вік від</label>
+                <input type="number" name="minAge" class="form-control"
+                       placeholder="Мін." value="@ViewBag.MinAge" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label fw-bold">Вік до</label>
+                <input type="number" name="maxAge" class="form-control"
+                       placeholder="Макс." value="@ViewBag.MaxAge" />
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-primary me-2">
+                    <i class="fas fa-search me-1"></i>Пошук
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">
+                    <i class="fas fa-sync-alt me-1"></i>Скинути
+                </a>
+            </div>
+        </form>
+    </div>
 
-@if (!Model.Any())
-{
-    <div class="alert alert-info">Клієнтів не знайдено</div>
-}
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th><i class="fas fa-user me-1"></i>ПІБ</th>
+                        <th><i class="fas fa-envelope me-1"></i>Email</th>
+                        <th><i class="fas fa-calendar me-1"></i>Вік</th>
+                        <th><i class="fas fa-cog me-1"></i>Дії</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var client in Model)
+                    {
+                        <tr>
+                            <td>@client.Id</td>
+                            <td><strong>@client.FullName</strong></td>
+                            <td>@client.Email</td>
+                            <td>
+                                <span class="badge bg-info rounded-pill">@client.Age років</span>
+                            </td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@client.Id" class="btn btn-sm btn-info" title="Деталі">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@client.Id" class="btn btn-sm btn-warning" title="Редагувати">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@client.Id" class="btn btn-sm btn-danger" title="Видалити">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info text-center py-5">
+            <i class="fas fa-inbox fa-3x mb-3"></i>
+            <h4>Клієнтів не знайдено</h4>
+            <p>Додайте першого клієнта, натиснувши кнопку вище</p>
+        </div>
+    }
+</div>

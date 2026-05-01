@@ -17,7 +17,7 @@ namespace DtosProject.Controllers
             _clientService = clientService;
         }
 
-        public IActionResult Index(string? searchTerm, int? minAge, int? maxAge)
+        public async Task<IActionResult> Index(string? searchTerm, int? minAge, int? maxAge)
         {
             var searchDto = new SearchClientsDTO
             {
@@ -26,7 +26,7 @@ namespace DtosProject.Controllers
                 MaxAge = maxAge
             };
 
-            var clients = _clientService.SearchClients(searchDto);
+            var clients = await _clientService.SearchClientsAsync(searchDto);
 
             ViewBag.SearchTerm = searchTerm;
             ViewBag.MinAge = minAge;
@@ -42,19 +42,19 @@ namespace DtosProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CreateClientDTO clientDto)
+        public async Task<IActionResult> Create(CreateClientDTO clientDto)
         {
             if (ModelState.IsValid)
             {
-                _clientService.AddClient(clientDto);
+                await _clientService.AddClientAsync(clientDto);
                 return RedirectToAction(nameof(Index));
             }
             return View(clientDto);
         }
 
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var client = _clientService.GetClientById(id);
+            var client = await _clientService.GetClientByIdAsync(id);
             if (client == null)
             {
                 return NotFound();
@@ -62,9 +62,9 @@ namespace DtosProject.Controllers
             return View(client);
         }
 
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
-            var client = _clientService.GetClientById(id);
+            var client = await _clientService.GetClientByIdAsync(id);
             if (client == null)
             {
                 return NotFound();
@@ -83,7 +83,7 @@ namespace DtosProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, UpdateClientDTO clientDto)
+        public async Task<IActionResult> Edit(int id, UpdateClientDTO clientDto)
         {
             if (id != clientDto.Id)
             {
@@ -92,7 +92,7 @@ namespace DtosProject.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = _clientService.UpdateClient(clientDto);
+                var result = await _clientService.UpdateClientAsync(clientDto);
                 if (result)
                 {
                     return RedirectToAction(nameof(Index));
@@ -102,9 +102,9 @@ namespace DtosProject.Controllers
             return View(clientDto);
         }
 
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var client = _clientService.GetClientById(id);
+            var client = await _clientService.GetClientByIdAsync(id);
             if (client == null)
             {
                 return NotFound();
@@ -114,9 +114,9 @@ namespace DtosProject.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            _clientService.DeleteClient(id);
+            await _clientService.DeleteClientAsync(id);
             return RedirectToAction(nameof(Index));
         }
 

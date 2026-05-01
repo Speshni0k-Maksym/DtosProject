@@ -1,36 +1,52 @@
 ﻿using DtosProject.DTOs;
 using DtosProject.Models;
+using DtosProject.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace DtosProject.Services
 {
     public class ClientService
     {
-        private readonly List<Client> _clients = new List<Client>();
-        public void AddClient(CreateClientDTO clientDto)
+        private readonly ApplicationDbContext _context;
+        private readonly ILogger<ClientService> _logger;
+
+        public ClientService(ApplicationDbContext context, ILogger<ClientService> logger)
+        {
+            _context = context;
+            _logger = logger;
+        }
+
+        public async Task AddClientAsync(CreateClientDTO clientDto)
         {
             var newClient = new Client
             {
-                Id = _clients.Count + 1,
                 FullName = clientDto.FullName,
                 Email = clientDto.Email,
                 Age = clientDto.Age,
                 CreatedAt = DateTime.Now
             };
-            _clients.Add(newClient);
+
+            _context.Clients.Add(newClient);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Client added: {FullName}", clientDto.FullName);
         }
-        public List<ClientListItemDTO> GetAllClients()
+
+        public async Task<List<ClientListItemDTO>> GetAllClientsAsync()
         {
-            return _clients.Select(c => new ClientListItemDTO
-            {
-                Id = c.Id,
-                FullName = c.FullName,
-                Email = c.Email,
-                Age = c.Age
-            }).ToList();
+            return await _context.Clients
+                .Select(c => new ClientListItemDTO
+                {
+                    Id = c.Id,
+                    FullName = c.FullName,
+                    Email = c.Email,
+                    Age = c.Age
+                })
+                .ToListAsync();
         }
-        public ClientDetailsDTO? GetClientById(int id)
+
+        public async Task<ClientDetailsDTO?> GetClientByIdAsync(int id)
         {
-            var client = _clients.FirstOrDefault(c => c.Id == id);
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.Id == id);
             if (client == null) return null;
 
             return new ClientDetailsDTO
@@ -42,27 +58,35 @@ namespace DtosProject.Services
                 CreatedAt = client.CreatedAt
             };
         }
-        public bool UpdateClient(UpdateClientDTO clientDto)
+
+        public async Task<bool> UpdateClientAsync(UpdateClientDTO clientDto)
         {
-            var client = _clients.FirstOrDefault(c => c.Id == clientDto.Id);
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.Id == clientDto.Id);
             if (client == null) return false;
 
             client.FullName = clientDto.FullName;
             client.Email = clientDto.Email;
             client.Age = clientDto.Age;
 
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Client updated: {Id} - {FullName}", client.Id, client.FullName);
             return true;
         }
-        public bool DeleteClient(int id)
+
+        public async Task<bool> DeleteClientAsync(int id)
         {
-            var client = _clients.FirstOrDefault(c => c.Id == id);
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.Id == id);
             if (client == null) return false;
 
-            return _clients.Remove(client);
+            _context.Clients.Remove(client);
+            await _context.SaveChangesAsync();
+            _logger.LogInformation("Client deleted: {Id}", id);
+            return true;
         }
-        public List<ClientListItemDTO> SearchClients(SearchClientsDTO searchDto)
+
+        public async Task<List<ClientListItemDTO>> SearchClientsAsync(SearchClientsDTO searchDto)
         {
-            var query = _clients.AsQueryable();
+            var query = _context.Clients.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(searchDto.SearchTerm))
             {
@@ -81,13 +105,13 @@ namespace DtosProject.Services
                 query = query.Where(c => c.Age <= searchDto.MaxAge.Value);
             }
 
-            return query.Select(c => new ClientListItemDTO
+            return await query.Select(c => new ClientListItemDTO
             {
                 Id = c.Id,
                 FullName = c.FullName,
                 Email = c.Email,
                 Age = c.Age
-            }).ToList();
+            }).ToListAsync();
         }
     }
 }
